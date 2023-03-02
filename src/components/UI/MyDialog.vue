@@ -29,6 +29,7 @@ export default {
 
 <style>
 .dialog {
+    z-index: 3;
     top: 0;
     bottom: 0;
     right: 0;
@@ -42,7 +43,7 @@ export default {
     margin: auto;
     background: #ffffff;
     border-radius: 10px;
-    min-width: 380px;
+    min-width: 500px;
     min-height: 50px;
     padding: 20px;
 }

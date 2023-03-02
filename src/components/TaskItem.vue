@@ -1,16 +1,24 @@
 <!-- Компонент задачи -->
 
 <template>
-    <div class="task">
-        <div>
-            <div><strong>Название: </strong>{{ taskItem.title }}</div>
-            <div><strong>Описание: </strong>
-                <span v-for="(task, index) in taskItem.body" :key="index"><br/>{{ taskItem.body[index].name }}</span>
-            </div>
-        </div>
-        <div class="post__btns">
+    <div class="d-flex flex-row mb-6">
+        <v-sheet width="35%" class="pa-2" color="indigo">
+            {{ taskItem.title }}
+        </v-sheet>
+        <v-sheet width="65%" class="pa-2">
+            <span 
+                v-for="(task, index) in taskPreview" 
+                :key="index"
+            >
+                {{ taskItem.body[index].name }} <br/>
+            </span>
+            <span v-if="taskItem.body.length >= 4">
+                ...
+            </span>
+        </v-sheet>
+
+        <div class="d-flex flex-column">
             <my-button 
-                style="margin-right: 15px"
                 @click="showRemoveDialog"
             >
                 Удалить
@@ -20,43 +28,43 @@
             >
                 Изменить
             </my-button>
-            
-            <my-dialog v-model:show="dialogRemoveVisible">
-                <h3>Вы уверены, что хотите удалить задачу?</h3>
-                <div class="btns">
-                    <my-button 
-                        @click="$emit('remove', task)"
-                        style="margin-right: 15px; margin-bottom: 0;"
-                    >
-                        Удалить
-                    </my-button>
-                    <my-button 
-                        @click="hideRemoveDialog"
-                        style="margin-bottom: 0"
-                    >
-                        Отмена
-                    </my-button>
-                </div>
-            </my-dialog>
-
-            <my-dialog v-model:show="dialogEditVisible">
-                <task-editing 
-                    :task="this.task"
-                    @hideDialog="hideEditDialog">
-                </task-editing>
-            </my-dialog>
         </div>
+            
+        <my-dialog v-model:show="dialogRemoveVisible">
+            <h3 class="mb-3">Вы уверены, что хотите удалить задачу?</h3>
+            <div class="btns d-flex flex-column">
+                <my-button 
+                    @click="$emit('remove', task)"
+                >
+                    Удалить
+                </my-button>
+                <my-button 
+                    @click="hideRemoveDialog"
+                    style="margin-bottom: 0;"
+                >
+                    Отмена
+                </my-button>
+            </div>
+        </my-dialog>
+
+        <my-dialog v-model:show="dialogEditVisible">
+            <task-editing 
+                :task="this.task"
+                @hideDialog="hideEditDialog">
+            </task-editing>
+        </my-dialog>
     </div>
 </template>
 
 <script>
 import TaskEditing from '@/components/TaskEditing.vue';
+import { VSheet } from 'vuetify/lib/components';
 
 export default {
     components: {
-        TaskEditing
+        TaskEditing,
+        VSheet
     },
-
     props: {
         task: {
             type: Object,
@@ -83,23 +91,14 @@ export default {
         hideEditDialog() {
             this.dialogEditVisible = false;
         }
+    },
+    computed: {
+        taskPreview () {
+            return this.taskItem.body.slice(0, 3);
+        }
     }
 }
 </script>
 
 <style>
-.task {
-    padding: 15px;
-    border: 2px solid #0d47a1;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.btns {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
 </style>
