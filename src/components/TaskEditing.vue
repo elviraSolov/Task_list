@@ -1,60 +1,70 @@
 <!-- Компонент формы редактирования задания -->
 
 <template>
-    <form @submit.prevent>
-        <h3>Редактирование задания №{{ taskItem.id }}</h3>
-        <my-input 
-            :value="taskItem.title"
+    <v-form @submit.prevent>
+        <h3 class="mb-3">Редактирование задания №{{ taskItem.id }}</h3>
+        <v-text-field 
+            label="Название"
+            v-model="taskItem.title"
             @change="changeInputTitle"
-            placeholder="Название"
         />
-
-        <div class="task-container"
-            v-for="(item, index) in taskItem.body"
-            :key="index"    
-        >
-            <div class="checkbox-container">
-                <input 
-                    class="checkbox" 
-                    type="checkbox" 
-                    id="task{{ index }}" 
-                    :checked="taskItem.body[index].done"
-                    @input="changeResult(index)"
-                />
-                <label for="task{{ index }}">
-                    <my-input 
-                        :value="taskItem.body[index].name"
-                        @change="changeInputBody($event, index)"
-                        placeholder="Задача"
-                    />
-                </label>
-                <my-button
-                    @click="removeTask(index)"
-                >
-                    Удалить задачу
-                </my-button>
-            </div>
-        </div>
-
-        <div class="btns">
-            <my-button 
-                style="margin-right: 15px; margin-bottom: 0;"
-                @click="$emit('hideDialog')"
+        <v-list>
+            <my-button @click="addTaskItem">Добавить задачу</my-button>
+            <v-list-subheader>Задачи</v-list-subheader>
+            <v-list-item
+                v-for="(item, index) in taskItem.body"
+                :key="index"
+                class="pa-0"
             >
-                Сохранить
-            </my-button>
+                <div class="d-flex flex-row align-center mb-3">
+                    <v-checkbox-btn
+                        v-model="taskItem.body[index].done"
+                        id="task{{ index }}" 
+                        class="mr-3"
+                        color="indigo"
+                        @click="changeResult(index)"
+                    />
+                    <v-text-field class="pr-2 mt-4"
+                        v-model="taskItem.body[index].name"
+                        @change="changeInputBody($event, index)"
+                        label="Задача"
+                        
+                    />
+                    <my-button
+                        @click="removeTask(index)"
+                    >
+                        Удалить
+                    </my-button>
+                </div>
+            </v-list-item>
+        </v-list>
+
+        <div class="btns d-flex justify-space-between">
             <my-button 
                 @click="$emit('hideDialog')"
                 style="margin-bottom: 0;"
             >
                 Отмена
             </my-button>
+            <my-button 
+                style="margin-bottom: 0;"
+                @click="$emit('hideDialog')"
+            >
+                Сохранить
+            </my-button>
         </div>
-    </form>
+    </v-form>
 </template>
 
 <script>
+import { VForm, VTextField, VCheckboxBtn,
+    VList, VListSubheader, VListItem } from 'vuetify/lib/components';
+
 export default {
+    components: {
+        VForm, VTextField, VCheckboxBtn,
+        VList, VListSubheader, VListItem
+    },
     props: {
         task: {
             type: Object,
@@ -79,25 +89,17 @@ export default {
         },
         changeResult(index) {
             this.taskItem.body[index].done = !this.taskItem.body[index].done;
+            console.log(this.taskItem.body[index].done)
         },
         removeTask(index) {
             this.taskItem.body.splice(index, 1)
-        }
+        },
+        addTaskItem() {
+            this.taskItem.body.push ({});
+        },
     }
 }
 </script>
 
 <style>
-.checkbox-container {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.checkbox {
-    position: absolute;
-    top: 50%;
-    left: -15px;
-}
 </style>

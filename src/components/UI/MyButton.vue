@@ -1,22 +1,22 @@
 <template>
-    <button class="btn">
+    <v-btn class="btn">
         <slot></slot>
-    </button>
+    </v-btn>
 </template>
 
 <script>
+import { VBtn } from 'vuetify/lib/components';
+
 export default {
+    components: {
+        VBtn
+    },
     name: 'my-button'
 }
 </script>
 
 <style>
 .btn {
-    margin-top: 15px;
     margin-bottom: 15px;
-    padding: 10px 15px;
-    background: none;
-    color: #0d47a1;
-    border: 1px solid #0d47a1;
 }
 </style>

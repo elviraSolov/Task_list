@@ -15,6 +15,7 @@
 
 <script>
 import TaskItem from "@/components/TaskItem";
+
 export default {
     components: {
         TaskItem

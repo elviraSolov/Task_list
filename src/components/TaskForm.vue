@@ -1,19 +1,19 @@
 <!-- Компонент формы для создания задания -->
 
 <template>
-    <form @submit.prevent>
-        <h4>Создание задания</h4>
-        <my-input 
+    <v-form @submit.prevent>
+        <h3 class="mb-3">Создание задания</h3>
+        <v-text-field
             v-model="task.title"
-            placeholder="Название"
+            label="Название"
         />
         <div class="task-container"
             v-for="(item, index) in task.body"
             :key="index"
         >
-            <my-input 
+            <v-text-field 
                 v-model="task.body[index].name"
-                placeholder='Задача'
+                label='Задача'
             />
         </div>
         <my-button
@@ -22,16 +22,22 @@
             Добавить задачу
         </my-button>
         <my-button 
-            style="align-self: flex-end; margin-bottom: 0;" 
+            style="margin-bottom: 0;" 
             @click="createTask"
         >
             Создать
         </my-button>
-    </form>
+    </v-form>
 </template>
 
 <script>
+import { VForm, VTextField } from 'vuetify/lib/components';
+
 export default {
+    components: {
+        VForm,
+        VTextField
+    },
     data() {
         return {
             task: {
