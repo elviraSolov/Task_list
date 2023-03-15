@@ -1,69 +1,115 @@
 <!-- Компонент задачи -->
 
 <template>
-    <div class="d-flex flex-row mb-6">
-        <v-sheet width="35%" class="pa-2" color="indigo">
+    <div class="d-flex flex-column mb-6 item">
+        <v-sheet class="pa-4" color="#efdecd">
             {{ taskItem.title }}
         </v-sheet>
-        <v-sheet width="65%" class="pa-2">
-            <span 
+
+        <v-sheet class="pa-4 pb-0">
+            <div
+                class="d-flex flex-row align-center mb-3"
                 v-for="(task, index) in taskPreview" 
                 :key="index"
             >
-                {{ taskItem.body[index].name }} <br/>
-            </span>
+                <v-checkbox-btn
+                    v-model="taskItem.body[index].done"
+                    id="task{{ index }}" 
+                    class="mr-3"
+                    disabled
+                />
+                <span>
+                    {{ taskItem.body[index].name }} <br/>
+                </span>
+            </div>
             <span v-if="taskItem.body.length >= 4">
-                ...
+                <v-icon class="eye">mdi-eye-outline</v-icon>
             </span>
         </v-sheet>
 
-        <div class="d-flex flex-column">
-            <my-button 
-                @click="showRemoveDialog"
+        <div class="d-flex flex-row btns">
+            <v-dialog
+                class="p-3"
+                v-model="dialogRemoveVisible"
+                persistent
+                width="600"
             >
-                Удалить
-            </my-button>
-            <my-button
-                @click="showEditDialog"
-            >
-                Изменить
-            </my-button>
-        </div>
-            
-        <my-dialog v-model:show="dialogRemoveVisible">
-            <h3 class="mb-3">Вы уверены, что хотите удалить задачу?</h3>
-            <div class="btns d-flex flex-column">
-                <my-button 
-                    @click="$emit('remove', task)"
-                >
-                    Удалить
-                </my-button>
-                <my-button 
-                    @click="hideRemoveDialog"
-                    style="margin-bottom: 0;"
-                >
-                    Отмена
-                </my-button>
-            </div>
-        </my-dialog>
+                <template v-slot:activator="{ props }">
+                    <v-btn 
+                        v-bind="props"
+                        icon
+                        size="small"
+                        class="mb-3 mr-2"
+                    >
+                        <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                </template>
+                <v-card>
+                    <v-card-title>
+                        <span class="text-h5">Вы уверены, что хотите удалить задачу?</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <div class="d-flex flex-row">
+                            <v-btn 
+                                color="#14293e"
+                                variant="text"
+                                @click="$emit('remove', task)"
+                                class="mb-3"
+                            >
+                                Удалить
+                            </v-btn>
+                            <v-btn 
+                                color="#14293e"
+                                variant="text"
+                                @click="hideRemoveDialog"
+                                style="margin-bottom: 0;"
+                            >
+                                Отмена
+                            </v-btn>
+                        </div>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
 
-        <my-dialog v-model:show="dialogEditVisible">
-            <task-editing 
-                :task="this.task"
-                @hideDialog="hideEditDialog">
-            </task-editing>
-        </my-dialog>
+            <v-dialog
+                class="p-3"
+                v-model="dialogEditVisible"
+                persistent
+                width="600"
+            >
+                <template v-slot:activator="{ props }">
+                    <v-btn 
+                        v-bind="props"
+                        icon
+                        size="small"
+                        class="mb-3"
+                    >
+                        <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                </template>
+                <v-card>
+                    <v-card-text>
+                        <task-editing 
+                            :task="this.task"
+                            @hideDialog="hideEditDialog">
+                        </task-editing>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+        </div>
     </div>
 </template>
 
 <script>
 import TaskEditing from '@/components/TaskEditing.vue';
-import { VSheet } from 'vuetify/lib/components';
+import { VSheet, VBtn, VIcon, VDialog, VCard, VCardTitle, VCardText, VCheckboxBtn } from 'vuetify/lib/components';
 
 export default {
     components: {
         TaskEditing,
-        VSheet
+        VSheet,
+        VBtn,
+        VIcon, VDialog, VCard, VCardTitle, VCardText, VCheckboxBtn
     },
     props: {
         task: {
@@ -75,7 +121,12 @@ export default {
         return {
             dialogRemoveVisible: false,
             dialogEditVisible: false,
-            taskItem: this.task
+            taskItem: this.task,
+
+            iconfont: 'mdi',
+            icons: {
+                'icon': 'mdi-dropbox'
+            },
         }
     },
     methods: {
@@ -100,5 +151,22 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.item {
+    position: relative;
+    width: 100%;
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.1); 
+}
+
+.btns {
+    position: absolute;
+    top: 8px;
+    right: 16px;
+}
+
+.eye {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
 </style>

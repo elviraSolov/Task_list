@@ -1,18 +1,37 @@
 <template>
     <v-app>
-        <v-container fluid style="margin: o auto; max-width: 1200px">
+        <v-container fluid style="margin: 0 auto; max-width: 720px">
             <div class="app">
-                <h1 class="mb-3">Страница с заданиями</h1>
-                <my-button
-                    @click="showDialog"
+                <v-dialog
+                    class="p-3"
+                    v-model="dialog"
+                    persistent
+                    width="600"
                 >
-                    Создать задание
-                </my-button>        
-                <my-dialog v-model:show="dialogVisible">
-                    <task-form
-                        @create="createTask"
-                    />
-                </my-dialog>
+                    <template v-slot:activator="{ props }">
+                        <v-btn
+                            icon
+                            v-bind="props"
+                            color="#003153"
+                            class="btn-plus"
+                            size="large"
+                        >
+                            <v-icon color="#ffffff">mdi-plus</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-card>
+                        <v-card-title>
+                            <span class="text-h5">Создание задания</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <task-form
+                                :dialog="this.dialog"
+                                @create="createTask"
+                                @hideDialog="hideDialog"
+                            />
+                        </v-card-text>
+                    </v-card>
+                </v-dialog>
                 <task-list
                     :tasks="tasks"
                     @remove="removeTask"
@@ -25,17 +44,19 @@
 <script>
 import TaskForm from '@/components/TaskForm.vue';
 import TaskList from '@/components/TaskList.vue';
-import { VApp, VContainer } from 'vuetify/lib/components';
+import { VApp, VContainer, VBtn, VDialog, VCard, VCardTitle, VCardText, VIcon } from 'vuetify/lib/components';
 
 export default {
     components: {
         TaskForm,
         TaskList,
         VApp,
-        VContainer
+        VContainer,
+        VBtn, VDialog,  VCard, VCardTitle, VCardText, VIcon
     },
     data() {
         return {
+            dialog: false,
             tasks: [
                 {   id: 1, 
                     title: 'Задание 1', 
@@ -88,10 +109,21 @@ export default {
         },
         hideDialog() {
             this.dialogVisible = false
+            this.dialog = false
         }
     }
 }
 </script>
 
-<style>
+<style scoped>
+.app {
+    position: relative;
+}
+
+.btn-plus {
+    position: fixed;
+    right: 15%;
+    bottom: 5%;
+    z-index: 2;
+}
 </style>

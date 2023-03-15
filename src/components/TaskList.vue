@@ -2,7 +2,7 @@
 
 <template>
     <div v-if="tasks.length > 0">
-        <h3>Список заданий</h3>
+        <h1 class="mb-3">Список заданий</h1>
         <task-item 
             v-for="task in tasks" 
             :task="task"
