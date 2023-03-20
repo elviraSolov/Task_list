@@ -1,16 +1,15 @@
-<!-- Компонент формы редактирования задания -->
+<!-- Редактирование задания -->
 
 <template>
     <v-form @submit.prevent>
-        <h3 class="mb-3">Редактирование задания</h3>
         <v-text-field 
-            label="Название"
-            v-model="taskItem.title"
-            @change="changeInputTitle"
+            label="Название*"
+            v-model="taskItemHistory.title[1]"
+            variant="underlined"
+            :rules="[ fieldValidate ]"
+            @input="isChanged = true"
         />
         <v-list>
-            <v-btn @click="addTaskItem">Добавить задачу</v-btn>
-            <v-list-subheader>Задачи</v-list-subheader>
             <v-list-item
                 v-for="(item, index) in taskItem.body"
                 :key="index"
@@ -21,98 +20,143 @@
                         v-model="taskItem.body[index].done"
                         id="task{{ index }}" 
                         class="mr-3"
-                        color="#d9b28a"
+                        color="success"
                         @click="changeResult(index)"
                     />
                     <v-text-field class="pr-2 mt-4"
                         v-model="taskItem.body[index].name"
-                        @change="changeInputBody($event, index)"
                         label="Задача"
+                        variant="underlined"
+                        @input="isChanged = true"
                     />
-                    <v-btn icon  size="small" @click="showRemoveDialog(index)">
+                    <v-btn 
+                        icon 
+                        size="small" 
+                        @click="showRemovingDialog(index)"
+                    >
                         <v-icon>mdi-delete</v-icon>
                     </v-btn>
+                    <app-dialog
+                        v-model="removingDialogVisible"
+                        @update:show="removingDialogVisible = $event"
+                    >
+                        <template v-slot:title>
+                            Вы уверены, что хотите удалить задачу?
+                        </template>
+                        <template v-slot:content>
+                            <v-card-actions>
+                                <v-btn @click="removeTask()">Удалить</v-btn>
+                                <v-spacer/>
+                                <v-btn @click="removingDialogVisible = false">Отмена</v-btn>
+                            </v-card-actions>
+                        </template>
+                    </app-dialog>
                 </div>
             </v-list-item>
         </v-list>
 
         <div class="btns d-flex justify-space-between">
             <v-btn 
-                color="#14293e"
                 variant="text"
-                @click="$emit('hideDialog')"
+                :disabled="(!this.isSaved && !isUndo)"
+                @click="
+                    buf = this.taskItemHistory.title[0]; 
+                    this.taskItemHistory.title[0] = this.taskItemHistory.title[1];
+                    this.taskItemHistory.title[1] = this.buf;
+                    isChanged = true;
+                    isSaved = false;
+                    isRedo = true;
+                    isUndo = false;
+                "
             >
-                Отмена
+                <v-icon>mdi-undo</v-icon>
             </v-btn>
             <v-btn 
+                variant="text"
+                :disabled="!isRedo"
+                @click="
+                    buf = this.taskItemHistory.title[0]; 
+                    this.taskItemHistory.title[0] = this.taskItemHistory.title[1];
+                    this.taskItemHistory.title[1] = this.buf;
+                    isChanged = true;
+                    isSaved = false;
+                    isRedo = false;
+                    isUndo = true;
+                "
+            >
+                <v-icon>mdi-redo</v-icon>
+            </v-btn>
+
+            <v-spacer/>
+
+            <v-btn
                 color="#14293e"
                 variant="text"
-                @click="$emit('hideDialog')"
+                @click="addTaskItem"
+            >
+                Добавить задачу
+            </v-btn>
+            <v-btn
+                color="#14293e"
+                variant="text"
+                :disabled="(!this.isValid || !this.isChanged)"
+                @click="
+                    this.taskItemHistory.title[0] = this.taskItem.title;
+                    this.taskItem.title = this.taskItemHistory.title[1];
+                    isChanged = false;
+                    isSaved = true;
+                "
             >
                 Сохранить
             </v-btn>
         </div>
-
-        <my-dialog v-model:show="dialogRemoveVisible">
-            <h3 class="mb-3">Вы уверены, что хотите удалить задание?</h3>
-            <div class="btns d-flex flex-row">
-                <v-btn 
-                    color="#14293e"
-                    variant="text"
-                    class="mb-3"
-                    @click="removeTask()"
-                >
-                    Удалить
-                </v-btn>
-                <v-btn 
-                    color="#14293e"
-                    variant="text"
-                    click="hideRemoveDialog"
-                >
-                    Отмена
-                </v-btn>
-            </div>
-        </my-dialog>
     </v-form>
 </template>
 
 <script>
-import { VForm, VTextField, VCheckboxBtn,
-    VList, VListSubheader, VListItem, VBtn, VIcon } from 'vuetify/lib/components';
+import { VSpacer, VForm, VTextField, VCheckboxBtn, VList, VListItem, VBtn, VIcon, VCardActions } from 'vuetify/lib/components';
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
     components: {
-        VForm, VTextField, VCheckboxBtn,
-        VList, VListSubheader, VListItem, VBtn, VIcon
+        VForm, 
+        VTextField, 
+        VCheckboxBtn,
+        VList,
+        VListItem, 
+        VBtn, 
+        VIcon,
+        VSpacer,
+        VCardActions
     },
     props: {
         task: {
             type: Object,
             required: true,
+        },
+        taskHistory: {
+            type: Object,
+            required: true
         }
     },
     data() {
         return {
-            dialogRemoveVisible: false,
+            removingDialogVisible: false,
             taskItem: this.task,
-            removingItemIndex: 0
+            taskItemHistory: this.taskHistory,
+            removingItemIndex: 0,
+            isValid: true,
+            isChanged: false,
+            isSaved: false,
+            dialog: false,
+            isRedo: false,
+            isUndo: false
         }
     },
     methods: {
-        showRemoveDialog(index) {
-            this.dialogRemoveVisible = true;
+        showRemovingDialog(index) {
+            this.removingDialogVisible = true;
             this.removingItemIndex = index
-        },
-        hideRemoveDialog() {
-            this.dialogRemoveVisible = false;
-        },
-        changeInputTitle(event) {
-            this.taskItem.title = event.target.value;
-            this.$emit("update:title", this.taskItem.title)
-        },
-        changeInputBody(event, index) {
-            this.taskItem.body[index].name = event.target.value;
-            this.$emit("update:body", this.taskItem.body[index].name)
         },
         changeResult(index) {
             this.taskItem.body[index].done = !this.taskItem.body[index].done;
@@ -120,14 +164,41 @@ export default {
         },
         removeTask() {
             this.taskItem.body.splice(this.removingItemIndex, 1)
-            this.dialogRemoveVisible = false;
+            this.removingDialogVisible = false;
         },
         addTaskItem() {
-            this.taskItem.body.push ({});
+            this.taskItem.body.push ({name: '', done: false});
+            this.taskItemHistory.body.push({name: ['', ''], done: ['', '']})
+        },
+        ...mapActions([
+            
+        ]),
+        fieldValidate (value) {
+            if (value.trim().length === 0) {
+                this.isValid = false
+                return "Это обязательное поле"
+            } else {
+                this.isValid = true
+                return true
+            }
         }
+    },
+    computed: {
+        ...mapGetters([
+            'getTask'
+        ])
     }
 }
 </script>
 
-<style>
+<style scoped>
+.done {
+  text-decoration: line-through;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
 </style>

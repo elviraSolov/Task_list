@@ -16,6 +16,7 @@
     "vue": "^3.2.13",
     "vuelidate": "^0.7.7",
     "vuetify": "^3.1.6",
+    "vuex": "^4.1.0",
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {

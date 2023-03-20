@@ -1,16 +1,16 @@
-<!-- Компонент списка задач -->
+<!-- Список заданий -->
 
 <template>
     <div v-if="tasks.length > 0">
         <h1 class="mb-3">Список заданий</h1>
         <task-item 
-            v-for="task in tasks" 
+            v-for="(task, index) in this.tasks" 
             :task="task"
-            :key="task.id"
-            @remove="$emit('remove', task)"
+            :key="index"
+            :taskHistory="tasksHistory[index]"
         />
     </div>
-    <h2 v-else>Список заданий пуст</h2>
+    <h1 v-else>Список заданий пуст</h1>
 </template>
 
 <script>
@@ -24,13 +24,14 @@ export default {
         tasks: {
             type: Array,
             required: true
+        },
+        tasksHistory: {
+            type: Array,
+            required: true
         }
     }
 }
 </script>
 
 <style scoped>
-h3 {
-    margin-bottom: 15px;
-}
 </style>

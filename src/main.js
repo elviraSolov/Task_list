@@ -7,11 +7,15 @@ import { createVuetify } from 'vuetify'
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/dist/vuetify.min.css'
 
+import store from '@/store'
+
 const vuetify = createVuetify({
     ssr: true,
 })
 
-const app = createApp(App).use(vuetify)
+const app = createApp(App)
+    .use(vuetify)
+    .use(store)
 
 components.forEach(component => {
     app.component(component.name, component)

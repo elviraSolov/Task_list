@@ -1,4 +1,4 @@
-<!-- Компонент задачи -->
+<!-- Задание -->
 
 <template>
     <div class="d-flex flex-column mb-6 item">
@@ -22,125 +22,119 @@
                     {{ taskItem.body[index].name }} <br/>
                 </span>
             </div>
-            <span v-if="taskItem.body.length >= 4">
-                <v-icon class="eye">mdi-eye-outline</v-icon>
+            <span class="preview-wrapper" v-if="taskItem.body.length >= 4">
+                <v-icon 
+                    class="eye"
+                    @mouseover="showPreview = true"
+                    @mouseleave="showPreview = false"
+                >
+                    mdi-eye-outline
+                </v-icon>
+                <task-preview 
+                    :task="this.taskItem" 
+                    class="preview" 
+                    v-show="showPreview"
+                />
             </span>
         </v-sheet>
 
         <div class="d-flex flex-row btns">
-            <v-dialog
-                class="p-3"
-                v-model="dialogRemoveVisible"
-                persistent
-                width="600"
+            <v-btn 
+                icon
+                size="small"
+                class="mb-3 mr-2"
+                variant="text"
+                @click="removingDialogVisible = true"
             >
-                <template v-slot:activator="{ props }">
-                    <v-btn 
-                        v-bind="props"
-                        icon
-                        size="small"
-                        class="mb-3 mr-2"
-                    >
-                        <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                </template>
-                <v-card>
-                    <v-card-title>
-                        <span class="text-h5">Вы уверены, что хотите удалить задачу?</span>
-                    </v-card-title>
-                    <v-card-text>
-                        <div class="d-flex flex-row">
-                            <v-btn 
-                                color="#14293e"
-                                variant="text"
-                                @click="$emit('remove', task)"
-                                class="mb-3"
-                            >
-                                Удалить
-                            </v-btn>
-                            <v-btn 
-                                color="#14293e"
-                                variant="text"
-                                @click="hideRemoveDialog"
-                                style="margin-bottom: 0;"
-                            >
-                                Отмена
-                            </v-btn>
-                        </div>
-                    </v-card-text>
-                </v-card>
-            </v-dialog>
+                <v-icon>mdi-delete</v-icon>
+            </v-btn>
 
-            <v-dialog
-                class="p-3"
-                v-model="dialogEditVisible"
-                persistent
-                width="600"
+            <v-btn 
+                icon
+                size="small"
+                class="mb-3 mr-2"
+                variant="text"
+                @click="editingDialogVisible = true"
             >
-                <template v-slot:activator="{ props }">
-                    <v-btn 
-                        v-bind="props"
-                        icon
-                        size="small"
-                        class="mb-3"
-                    >
-                        <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
+                <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+
+            <app-dialog
+                v-model="removingDialogVisible"
+                @update:show="removingDialogVisible = $event"
+            >
+                <template v-slot:title>
+                    Вы уверены, что хотите удалить задачу?
                 </template>
-                <v-card>
-                    <v-card-text>
-                        <task-editing 
-                            :task="this.task"
-                            @hideDialog="hideEditDialog">
-                        </task-editing>
-                    </v-card-text>
-                </v-card>
-            </v-dialog>
+                <template v-slot:content>
+                    <v-card-actions>
+                        <v-btn @click="removeTask(taskItem)">Да, удалить</v-btn>
+                        <v-spacer/>
+                        <v-btn @click="removingDialogVisible = false">Отмена</v-btn>
+                    </v-card-actions>
+                </template>
+            </app-dialog>
+            
+            <app-dialog 
+                v-model="editingDialogVisible" 
+                @update:show="editingDialogVisible = $event"
+            >
+                <template v-slot:title>
+                    Редактирование задания
+                </template>
+                <template v-slot:content>
+                    <task-editing
+                        :task="taskItem"
+                        :taskHistory="taskItemHistory"
+                    />
+                </template>
+            </app-dialog>
         </div>
     </div>
 </template>
 
 <script>
-import TaskEditing from '@/components/TaskEditing.vue';
-import { VSheet, VBtn, VIcon, VDialog, VCard, VCardTitle, VCardText, VCheckboxBtn } from 'vuetify/lib/components';
+import TaskPreview from './TaskPreview.vue'
+import TaskEditing from '@/components/TaskEditing.vue'
+import { VCardActions, VSheet, VBtn, VIcon, VCheckboxBtn, VSpacer } from 'vuetify/lib/components'
+import { mapActions } from 'vuex'
 
 export default {
     components: {
         TaskEditing,
+        TaskPreview,
         VSheet,
         VBtn,
-        VIcon, VDialog, VCard, VCardTitle, VCardText, VCheckboxBtn
+        VIcon,  
+        VCardActions,
+        VCheckboxBtn, 
+        VSpacer
     },
     props: {
         task: {
             type: Object,
             required: true,
+        },
+        taskHistory: {
+            type: Object,
+            required: true
         }
     },
     data() {
         return {
-            dialogRemoveVisible: false,
-            dialogEditVisible: false,
+            editingDialogVisible: false,
+            removingDialogVisible: false,
             taskItem: this.task,
-
-            iconfont: 'mdi',
-            icons: {
-                'icon': 'mdi-dropbox'
-            },
+            taskItemHistory: this.taskHistory,
+            showPreview: false
         }
     },
     methods: {
-        showRemoveDialog() {
-            this.dialogRemoveVisible = true;
-        },
-        hideRemoveDialog() {
-            this.dialogRemoveVisible = false;
-        },
-        showEditDialog() {
-            this.dialogEditVisible = true;
-        },
-        hideEditDialog() {
-            this.dialogEditVisible = false;
+        ...mapActions([
+            'removeTask'
+        ]),
+        remove() {
+            this.$emit('remove')
         }
     },
     computed: {
@@ -165,6 +159,17 @@ export default {
 }
 
 .eye {
+    padding: 10px;
+}
+
+.preview {
+    position: absolute;
+    right: calc(-100% + 65px);
+    bottom: 100%;
+    z-index: 10;
+}
+
+.preview-wrapper {
     position: absolute;
     bottom: 20px;
     right: 20px;

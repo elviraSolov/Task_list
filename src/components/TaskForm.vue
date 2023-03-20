@@ -1,12 +1,13 @@
-<!-- Компонент формы для создания задания -->
+<!-- Форма для нового задания -->
 
 <template>
     <v-form @submit.prevent>
         <v-text-field
             class="mb-2"
             label="Название*"
-            v-model="task.title"
+            v-model="this.task.title"
             :rules="[ fieldValidate ]"
+            variant="outlined"
         />
         <div class="task-container"
             v-for="(item, index) in task.body"
@@ -16,13 +17,14 @@
                 class="mb-2"
                 label="Задача"
                 v-model="task.body[index].name"
+                variant="outlined"
             />
         </div>
         <v-card-actions>
             <v-btn
                 color="#14293e"
                 variant="text"
-                @click="hideDialog"
+                @click="hideDialog()"
             >
                 Отмена
             </v-btn>
@@ -35,9 +37,9 @@
                 Добавить задачу
             </v-btn>
             <v-btn
-                color="#14293e"
+                color="success"
                 variant="text"
-                @click="createTask"
+                @click=" addTask(this.task); hideDialog()"
                 :disabled="!this.isValid"
             >
                 Создать
@@ -49,10 +51,15 @@
 
 <script>
 import { VForm, VTextField, VBtn, VSpacer, VCardActions } from 'vuetify/lib/components';
+import { mapActions } from 'vuex';
 
 export default {
     props: {
         dialog: {
+            type: Boolean,
+            default: false
+        },
+        show: {
             type: Boolean,
             default: false
         }
@@ -73,17 +80,8 @@ export default {
         }
     },
     methods: {
-        createTask() {
-            this.task.id = Date.now();
-            this.$emit('create', this.task)
-            this.task = {
-                title: '',
-                body: []
-            }
-            this.$emit('hideDialog')
-        },
         addTaskItem() {
-            this.task.body.push ({});
+            this.task.body.push ({name: '', done: false});
         },
         fieldValidate (value) {
             if (value.trim().length === 0) {
@@ -96,7 +94,10 @@ export default {
         },
         hideDialog() {
             this.$emit('hideDialog')
-        }
+        },
+        ...mapActions ([
+            'addTask'
+        ])
     },
 }
 </script>

@@ -1,5 +1,5 @@
-import MyDialog from '@/components/UI/MyDialog'
+import AppDialog from '@/components/UI/AppDialog'
 
 export default [
-    MyDialog
+    AppDialog
 ]
