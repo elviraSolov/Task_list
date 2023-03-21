@@ -8,7 +8,7 @@
 
         <v-sheet class="pa-4 pb-0">
             <div
-                class="d-flex flex-row align-center mb-3"
+                class="d-flex align-center mb-3"
                 v-for="(task, index) in taskPreview" 
                 :key="index"
             >

@@ -15,16 +15,17 @@
                 :key="index"
                 class="pa-0"
             >
-                <div class="d-flex flex-row align-center mb-3">
+                <div class="d-flex align-center mb-3">
                     <v-checkbox-btn
-                        v-model="taskItem.body[index].done"
+                        v-model="taskItemHistory.body[index].done[1]"
                         id="task{{ index }}" 
                         class="mr-3"
                         color="success"
                         @click="changeResult(index)"
+                        @change="isChanged = true"
                     />
                     <v-text-field class="pr-2 mt-4"
-                        v-model="taskItem.body[index].name"
+                        v-model="taskItemHistory.body[index].name[1]"
                         label="Задача"
                         variant="underlined"
                         @input="isChanged = true"
@@ -61,9 +62,7 @@
                 variant="text"
                 :disabled="(!this.isSaved && !isUndo)"
                 @click="
-                    buf = this.taskItemHistory.title[0]; 
-                    this.taskItemHistory.title[0] = this.taskItemHistory.title[1];
-                    this.taskItemHistory.title[1] = this.buf;
+                    undoChanges(taskItem.id);
                     isChanged = true;
                     isSaved = false;
                     isRedo = true;
@@ -76,9 +75,7 @@
                 variant="text"
                 :disabled="!isRedo"
                 @click="
-                    buf = this.taskItemHistory.title[0]; 
-                    this.taskItemHistory.title[0] = this.taskItemHistory.title[1];
-                    this.taskItemHistory.title[1] = this.buf;
+                    undoChanges(taskItem.id);
                     isChanged = true;
                     isSaved = false;
                     isRedo = false;
@@ -102,8 +99,7 @@
                 variant="text"
                 :disabled="(!this.isValid || !this.isChanged)"
                 @click="
-                    this.taskItemHistory.title[0] = this.taskItem.title;
-                    this.taskItem.title = this.taskItemHistory.title[1];
+                    changeTask(taskItem.id)
                     isChanged = false;
                     isSaved = true;
                 "
@@ -116,7 +112,7 @@
 
 <script>
 import { VSpacer, VForm, VTextField, VCheckboxBtn, VList, VListItem, VBtn, VIcon, VCardActions } from 'vuetify/lib/components';
-import { mapActions } from 'vuex'
+import {  mapActions } from 'vuex'
 
 export default {
     components: {
@@ -159,10 +155,6 @@ export default {
             this.removingDialogVisible = true;
             this.removingItemIndex = index
         },
-        changeResult(index) {
-            this.taskItem.body[index].done = !this.taskItem.body[index].done;
-            console.log(this.taskItem.body[index].done)
-        },
         removeTask() {
             this.taskItem.body.splice(this.removingItemIndex, 1)
             this.removingDialogVisible = false;
@@ -172,7 +164,9 @@ export default {
             this.taskItemHistory.body.push({name: ['', ''], done: ['', '']})
         },
         ...mapActions([
-            
+            'changeTask',
+            'undoChanges',
+            'redoChanges'
         ]),
         fieldValidate (value) {
             if (value.trim().length === 0) {
@@ -193,3 +187,5 @@ export default {
 
 
 
+
+ 
