@@ -1,13 +1,14 @@
 <!-- Список заданий -->
 
 <template>
-    <div v-if="tasks.length > 0">
+    <div v-if="getTasks.length > 0">
         <h1 class="mb-3">Список заданий</h1>
         <task-item 
-            v-for="(task, index) in this.tasks" 
+            v-for="(task, index) in getTasks" 
             :task="task"
-            :key="index"
-            :taskHistory="tasksHistory[index]"
+            :key="task.id"
+            :taskItemKey="index"
+            :taskHistory="getTasksHistory[index]"
         />
     </div>
     <h1 v-else>Список заданий пуст</h1>
@@ -15,20 +16,17 @@
 
 <script>
 import TaskItem from "@/components/TaskItem";
+import { mapGetters } from 'vuex'
 
 export default {
     components: {
         TaskItem
     },
-    props: {
-        tasks: {
-            type: Array,
-            required: true
-        },
-        tasksHistory: {
-            type: Array,
-            required: true
-        }
+    computed: {
+        ...mapGetters ([
+            'getTasks',
+            'getTasksHistory'
+        ])
     }
 }
 </script>

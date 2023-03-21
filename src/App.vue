@@ -2,30 +2,25 @@
     <v-app>
         <v-container fluid style="margin: 0 auto; max-width: 720px">
             <div class="app">
-                <task-list
-                    :tasks="getTasks"
-                    :tasksHistory="getTasksHistory"
-                />
+                <task-list/>
                 <v-btn
-                    icon
-                    v-bind="props"
-                    color="#003153"
+                    icon color="#003153"
                     class="btn-plus"
                     size="large"
-                    @click="showDialog"
+                    @click="this.formDialogVisible = true"
                 >
                     <v-icon color="#ffffff">mdi-plus</v-icon>
                 </v-btn>
                 <app-dialog 
-                    v-model="show" 
-                    @update:show="this.show = $event"
+                    v-model="formDialogVisible" 
+                    @update:show="this.formDialogVisible = $event"
                 >
                     <template v-slot:title>
                         Новое задание
                     </template>
                     <template v-slot:content>
                         <task-form
-                            @hideDialog="hideDialog()"
+                            @hideDialog="this.formDialogVisible = false"
                         />
                     </template>
                 </app-dialog>
@@ -40,14 +35,8 @@ import TaskForm from '@/components/TaskForm.vue';
 import TaskList from '@/components/TaskList.vue';
 
 import { VApp, VContainer, VBtn, VIcon } from 'vuetify/lib/components';
-import { mapActions, mapGetters } from 'vuex'
 
 export default {
-    props: {
-        dialogVisible: {
-            type: Boolean
-        }
-    },
     components: {
         TaskForm,
         TaskList,
@@ -59,27 +48,8 @@ export default {
     },
     data() {
         return {
-            dialog: false,
-            show: false,
+            formDialogVisible: false,
         }
-    },
-    methods: {
-        hideDialog() {
-            this.dialog = false
-            this.show = false
-        },
-        ...mapActions([
-            'addTask'
-        ]),
-        showDialog() {
-            this.show = true
-        }
-    },
-    computed: {
-        ...mapGetters([
-            'getTasks',
-            'getTasksHistory'
-        ])
     }
 }
 </script>

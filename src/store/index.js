@@ -59,23 +59,27 @@ export default createStore({
         getTasks(state) {
             return state.tasks
         },
+        
         getTasksHistory(state) {
             return state.tasksHistory
+        },
+        getTaskById: (state) => (id) => {
+            return state.tasks.find((task, index) => index === id)
+        },
+        getTaskHistoryById: (state) => (id) => {
+            return state.tasksHistory.find((taskHistory, index) => index === id)
         }
     },
     actions: {
-        addTask(context, data) {
-            context.commit('ADD_TASK', data)
+        addTask({ commit }, data) {
+            commit('ADD_TASK', data)
         },
-        removeTask(context, data) {
-            context.commit('REMOVE_TASK', data)
+        removeTaskById({ commit }, data) {
+            commit('REMOVE_TASK_BY_ID', data)
         },
         changeTaskTitle(context, data) {
             context.commit('CHANGE_TASK_TITLE', data)
         },
-        // changeBodyName(context, data) {
-        //     context.commit('CHANGE_BODY_NAME', data)
-        // },
         removeTaskBodyChanges(context, data) {
             context.commit('REMOVE_TASK_BODY_CHANGES', data)
         },
@@ -99,14 +103,14 @@ export default createStore({
             }
             state.tasks.push(data)
             state.tasksHistory.push(newTask)
+
+            console.log(data)
+            console.log(state.tasks)
         },
-        // REMOVE_TASK(state, task) {
-            // console.log(index)
-            // let i = state.tasks.map(item => item.id).indexOf(task.id)
-            // console.log(task)
-            // console.log(i)
-            // state.tasks.splice(i, 1)
-        // }, 
+        REMOVE_TASK_BY_ID(state, index) {
+            state.tasks = state.tasks.filter(item => item.id !== index)
+            state.tasksHistory = state.tasksHistory.filter(item => item.id !== index)
+        },
         CHANGE_TASK_TITLE(task, taskHistory) {
             task.title = taskHistory.title[1] 
             
@@ -122,7 +126,7 @@ export default createStore({
         //         body[index].name[1] = body[index].name[2]
         //     }
         // },
-        REMOVE_TASK_BODY_CHANGES(state, body) {
+        REMOVE_TASK_BODY_CHANGES(_, body) {
             for (let index in body) {
                 body[index].name[2] = body[index].name[1]
             }

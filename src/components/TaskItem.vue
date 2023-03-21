@@ -2,7 +2,7 @@
 
 <template>
     <div class="d-flex flex-column mb-6 item">
-        <v-sheet class="pa-4" color="#efdecd">
+        <v-sheet class="pa-4" color="#abcdef">
             {{ taskItem.title }}
         </v-sheet>
 
@@ -22,13 +22,14 @@
                     {{ taskItem.body[index].name }} <br/>
                 </span>
             </div>
+               
             <span class="preview-wrapper" v-if="taskItem.body.length >= 4">
                 <v-icon 
-                    class="eye"
+                    class="dots"
                     @mouseover="showPreview = true"
                     @mouseleave="showPreview = false"
                 >
-                    mdi-eye-outline
+                    mdi-dots-horizontal
                 </v-icon>
                 <task-preview 
                     :task="this.taskItem" 
@@ -38,11 +39,10 @@
             </span>
         </v-sheet>
 
-        <div class="d-flex flex-row btns">
+        <div class="btns">
             <v-btn 
-                icon
-                size="small"
-                class="mb-3 mr-2"
+                icon size="small"
+                class="mr-1"
                 variant="text"
                 @click="removingDialogVisible = true"
             >
@@ -50,9 +50,7 @@
             </v-btn>
 
             <v-btn 
-                icon
-                size="small"
-                class="mb-3 mr-2"
+                icon size="small" 
                 variant="text"
                 @click="editingDialogVisible = true"
             >
@@ -63,12 +61,10 @@
                 v-model="removingDialogVisible"
                 @update:show="removingDialogVisible = $event"
             >
-                <template v-slot:title>
-                    Вы уверены, что хотите удалить задачу?
-                </template>
+                <template v-slot:title>Вы уверены, что хотите удалить задание?</template>
                 <template v-slot:content>
-                    <v-card-actions>
-                        <v-btn @click="removeTask(taskItem)">Да, удалить</v-btn>
+                    <v-card-actions>  
+                        <v-btn @click="removeTaskById(task.id); removingDialogVisible = false">Да, удалить</v-btn>
                         <v-spacer/>
                         <v-btn @click="removingDialogVisible = false">Отмена</v-btn>
                     </v-card-actions>
@@ -79,9 +75,7 @@
                 v-model="editingDialogVisible" 
                 @update:show="editingDialogVisible = $event"
             >
-                <template v-slot:title>
-                    Редактирование задания
-                </template>
+                <template v-slot:title>Редактирование задания</template>
                 <template v-slot:content>
                     <task-editing
                         :task="taskItem"
@@ -118,6 +112,10 @@ export default {
         taskHistory: {
             type: Object,
             required: true
+        },
+        taskItemKey: {
+            type: Number,
+            required: true
         }
     },
     data() {
@@ -131,11 +129,8 @@ export default {
     },
     methods: {
         ...mapActions([
-            'removeTask'
-        ]),
-        remove() {
-            this.$emit('remove')
-        }
+            'removeTaskById'
+        ])
     },
     computed: {
         taskPreview () {
@@ -155,23 +150,23 @@ export default {
 .btns {
     position: absolute;
     top: 8px;
-    right: 16px;
+    right: 8px;
 }
 
-.eye {
+.dots {
     padding: 10px;
+    margin-bottom: 10px;
 }
 
 .preview {
     position: absolute;
-    right: calc(-100% + 65px);
+    left: calc(100% + 15px);
     bottom: 100%;
     z-index: 10;
 }
 
 .preview-wrapper {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
+    position: relative;
+    left: 8px
 }
 </style>

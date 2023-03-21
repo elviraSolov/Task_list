@@ -32,6 +32,7 @@
                     <v-btn 
                         icon 
                         size="small" 
+                        variant="text"
                         @click="showRemovingDialog(index)"
                     >
                         <v-icon>mdi-delete</v-icon>
@@ -115,7 +116,7 @@
 
 <script>
 import { VSpacer, VForm, VTextField, VCheckboxBtn, VList, VListItem, VBtn, VIcon, VCardActions } from 'vuetify/lib/components';
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
     components: {
@@ -182,23 +183,13 @@ export default {
                 return true
             }
         }
-    },
-    computed: {
-        ...mapGetters([
-            'getTask'
-        ])
     }
 }
 </script>
 
 <style scoped>
-.done {
-  text-decoration: line-through;
-}
 
-.close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-}
 </style>
+
+
+

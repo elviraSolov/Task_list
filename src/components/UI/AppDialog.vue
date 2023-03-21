@@ -39,24 +39,6 @@ export default {
         VIcon,
         VBtn,
         VSpacer
-    },
-    props: {
-        show: {
-            type: Boolean,
-            default: false
-        }
-    },
-    data() {
-        return {
-            showDialog: this.show
-        }
-    },
-    methods: {
-        hideDialog() {
-            this.showDialog = false
-            //this.$emit('update:showDialog', false)
-            //this.$emit('hideDialog')
-        }
     }
 }
 </script>

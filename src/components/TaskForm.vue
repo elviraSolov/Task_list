@@ -39,7 +39,7 @@
             <v-btn
                 color="success"
                 variant="text"
-                @click=" addTask(this.task); hideDialog()"
+                @click=" addTask(task); hideDialog()"
                 :disabled="!this.isValid"
             >
                 Создать
@@ -54,21 +54,12 @@ import { VForm, VTextField, VBtn, VSpacer, VCardActions } from 'vuetify/lib/comp
 import { mapActions } from 'vuex';
 
 export default {
-    props: {
-        dialog: {
-            type: Boolean,
-            default: false
-        },
-        show: {
-            type: Boolean,
-            default: false
-        }
-    },
     components: {
         VForm,
         VTextField,
         VBtn,
-        VSpacer, VCardActions
+        VSpacer, 
+        VCardActions
     },
     data() {
         return {
