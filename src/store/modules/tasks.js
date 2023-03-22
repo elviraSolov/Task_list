@@ -126,7 +126,10 @@ export default {
 
             for (let i in state.taskHistory.body) {
                 [state.taskHistory.body[i].name[0], state.taskHistory.body[i].name[1]] =
-                [state.taskHistory.body[i].name[1], state.taskHistory.body[i].name[0]]
+                [state.taskHistory.body[i].name[1], state.taskHistory.body[i].name[0]];
+
+                [state.taskHistory.body[i].done[0], state.taskHistory.body[i].done[1]] =
+                [state.taskHistory.body[i].done[1], state.taskHistory.body[i].done[0]]
             }
         },
         REMOVE_TASK_ITEM(state, taskItemId) {

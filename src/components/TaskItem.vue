@@ -107,7 +107,8 @@
                             for (i in taskItemHistory.body) {
                                 taskItemHistory.body[i].name[1] = taskItem.body[i].name;
                                 taskItemHistory.body[i].done[1] = taskItem.body[i].done;
-                            }"
+                            }
+                            setChanged(false)"
                         >
                             Да, выйти
                         </v-btn>
@@ -165,7 +166,8 @@ export default {
     methods: {
         ...mapActions([
             'removeTaskById',
-            'setTask'
+            'setTask',
+            'setChanged'
         ])
     },
     computed: {
