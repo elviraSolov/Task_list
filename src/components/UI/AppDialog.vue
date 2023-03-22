@@ -1,18 +1,17 @@
 <template>
     <v-dialog
-        class="p-3"
-        persistent
+        class="p-3"  
         width="600"
     >      
         <v-card>
-            <v-card-title>
+            <v-card-title class="mr-10">
                 <slot name="title"></slot>
             </v-card-title>
             <v-card-actions class="close">
                 <v-spacer/>
                 <v-btn
                     variant="text"
-                    @click="this.$emit('update:show', false)"
+                    @click="this.$emit('onClose')"
                 >
                     <v-icon>mdi-close</v-icon>
                 </v-btn>

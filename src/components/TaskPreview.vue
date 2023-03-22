@@ -9,7 +9,7 @@
             </v-card-item>
             <v-card-text>
                 <div
-                    class="d-flex flex-row align-center mb-3"
+                    class="d-flex align-center mb-3"
                     v-for="(item, index) in taskItem.body" 
                     :key="index"
                 >
@@ -33,7 +33,12 @@ import { VCard, VCardTitle, VCardSubtitle, VCardItem, VCardText, VCheckboxBtn } 
 
 export default {
     components: {
-        VCard, VCardTitle, VCardSubtitle, VCardItem, VCardText, VCheckboxBtn
+        VCard, 
+        VCardTitle, 
+        VCardSubtitle, 
+        VCardItem,
+        VCardText, 
+        VCheckboxBtn
     },
     props: {
         task: {

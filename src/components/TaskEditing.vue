@@ -7,11 +7,11 @@
             v-model="taskItemHistory.title[1]"
             variant="underlined"
             :rules="[ fieldValidate ]"
-            @input="isChanged = true"
+            @input="setChanged(true)"
         />
         <v-list>
             <v-list-item
-                v-for="(item, index) in taskItem.body"
+                v-for="(item, index) in taskItemHistory.body"
                 :key="index"
                 class="pa-0"
             >
@@ -21,35 +21,47 @@
                         id="task{{ index }}" 
                         class="mr-3"
                         color="success"
-                        @click="changeResult(index)"
-                        @change="isChanged = true"
+                        @change="setChanged(true)"
                     />
-                    <v-text-field class="pr-2 mt-4"
+                    <v-text-field 
+                        class="pr-2 mt-4"
                         v-model="taskItemHistory.body[index].name[1]"
                         label="Задача"
                         variant="underlined"
-                        @input="isChanged = true"
+                        @input="setChanged(true)"
                     />
                     <v-btn 
                         icon 
                         size="small" 
                         variant="text"
-                        @click="showRemovingDialog(index)"
+                        @click="
+                            removingDialogVisible = true; 
+                            removingItemIndex = index"
                     >
                         <v-icon>mdi-delete</v-icon>
                     </v-btn>
                     <app-dialog
                         v-model="removingDialogVisible"
-                        @update:show="removingDialogVisible = $event"
+                        @onClose="removingDialogVisible = false"
                     >
                         <template v-slot:title>
                             Вы уверены, что хотите удалить задачу?
                         </template>
                         <template v-slot:content>
                             <v-card-actions>
-                                <v-btn @click="removeTask()">Удалить</v-btn>
+                                <v-btn @click="
+                                    setTask(taskItem.id); 
+                                    removeTaskItem(removingItemIndex); 
+                                    removingDialogVisible = false; 
+                                    setChanged(true);
+                                    isSaved = false"
+                                >
+                                    Да, удалить
+                                </v-btn>
                                 <v-spacer/>
-                                <v-btn @click="removingDialogVisible = false">Отмена</v-btn>
+                                <v-btn @click="removingDialogVisible = false">
+                                    Отмена
+                                </v-btn>
                             </v-card-actions>
                         </template>
                     </app-dialog>
@@ -62,12 +74,11 @@
                 variant="text"
                 :disabled="(!this.isSaved && !isUndo)"
                 @click="
-                    undoChanges(taskItem.id);
-                    isChanged = true;
+                    undoChanges();
+                    setChanged(true);
                     isSaved = false;
                     isRedo = true;
-                    isUndo = false;
-                "
+                    isUndo = false"
             >
                 <v-icon>mdi-undo</v-icon>
             </v-btn>
@@ -75,12 +86,11 @@
                 variant="text"
                 :disabled="!isRedo"
                 @click="
-                    undoChanges(taskItem.id);
-                    isChanged = true;
+                    undoChanges();
+                    setChanged(true);
                     isSaved = false;
                     isRedo = false;
-                    isUndo = true;
-                "
+                    isUndo = true"
             >
                 <v-icon>mdi-redo</v-icon>
             </v-btn>
@@ -88,21 +98,22 @@
             <v-spacer/>
 
             <v-btn
-                color="#14293e"
                 variant="text"
-                @click="addTaskItem"
+                @click="
+                    setTask(taskItem.id); 
+                    addTaskItem();
+                    setChanged(true)"
             >
                 Добавить задачу
             </v-btn>
             <v-btn
-                color="#14293e"
                 variant="text"
-                :disabled="(!this.isValid || !this.isChanged)"
+                :disabled="(!this.isValid || !this.getChanged)"
                 @click="
-                    changeTask(taskItem.id)
-                    isChanged = false;
-                    isSaved = true;
-                "
+                    setTask(taskItem.id);
+                    changeTask();
+                    setChanged(false);
+                    isSaved = true"
             >
                 Сохранить
             </v-btn>
@@ -112,7 +123,7 @@
 
 <script>
 import { VSpacer, VForm, VTextField, VCheckboxBtn, VList, VListItem, VBtn, VIcon, VCardActions } from 'vuetify/lib/components';
-import {  mapActions } from 'vuex'
+import {  mapActions, mapGetters } from 'vuex'
 
 export default {
     components: {
@@ -138,35 +149,26 @@ export default {
     },
     data() {
         return {
-            removingDialogVisible: false,
             taskItem: this.task,
             taskItemHistory: this.taskHistory,
-            removingItemIndex: 0,
+            removingDialogVisible: false,
+            removingItemIndex: null,
             isValid: true,
             isChanged: false,
             isSaved: false,
-            dialog: false,
             isRedo: false,
             isUndo: false
         }
     },
     methods: {
-        showRemovingDialog(index) {
-            this.removingDialogVisible = true;
-            this.removingItemIndex = index
-        },
-        removeTask() {
-            this.taskItem.body.splice(this.removingItemIndex, 1)
-            this.removingDialogVisible = false;
-        },
-        addTaskItem() {
-            this.taskItem.body.push ({name: '', done: false});
-            this.taskItemHistory.body.push({name: ['', ''], done: ['', '']})
-        },
         ...mapActions([
             'changeTask',
             'undoChanges',
-            'redoChanges'
+            'redoChanges',
+            'addTaskItem',
+            'removeTaskItem',
+            'setTask',
+            'setChanged'
         ]),
         fieldValidate (value) {
             if (value.trim().length === 0) {
@@ -177,15 +179,11 @@ export default {
                 return true
             }
         }
+    },
+    computed: {
+        ...mapGetters ([
+            'getChanged'
+        ])
     }
 }
 </script>
-
-<style scoped>
-
-</style>
-
-
-
-
- 

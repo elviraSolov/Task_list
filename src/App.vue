@@ -12,8 +12,9 @@
                     <v-icon color="#ffffff">mdi-plus</v-icon>
                 </v-btn>
                 <app-dialog 
+                    persistent
                     v-model="formDialogVisible" 
-                    @update:show="this.formDialogVisible = $event"
+                    @onClose="this.formDialogVisible = false"
                 >
                     <template v-slot:title>
                         Новое задание
@@ -55,10 +56,6 @@ export default {
 </script>
 
 <style scoped>
-.app {
-    position: relative;
-}
-
 .btn-plus {
     position: fixed;
     right: 15%;

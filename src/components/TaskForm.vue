@@ -22,7 +22,6 @@
         </div>
         <v-card-actions>
             <v-btn
-                color="#14293e"
                 variant="text"
                 @click="hideDialog()"
             >
@@ -30,7 +29,6 @@
             </v-btn>
             <v-spacer/>
             <v-btn
-                color="#14293e"
                 variant="text"
                 @click="addTaskItem"
             >
@@ -39,13 +37,14 @@
             <v-btn
                 color="success"
                 variant="text"
-                @click=" addTask(task); hideDialog()"
                 :disabled="!this.isValid"
+                @click="
+                    addTask(task); 
+                    hideDialog()"
             >
                 Создать
             </v-btn>
         </v-card-actions>
-        
     </v-form>
 </template>
 
@@ -72,7 +71,7 @@ export default {
     },
     methods: {
         addTaskItem() {
-            this.task.body.push ({name: '', done: false});
+            this.task.body.push ({name: '', done: false})
         },
         fieldValidate (value) {
             if (value.trim().length === 0) {
@@ -89,9 +88,6 @@ export default {
         ...mapActions ([
             'addTask'
         ])
-    },
+    }
 }
 </script>
-
-<style>
-</style>

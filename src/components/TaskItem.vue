@@ -1,11 +1,10 @@
 <!-- Задание -->
 
 <template>
-    <div class="d-flex flex-column mb-6 item">
+    <v-card class="d-flex flex-column mb-6 item">
         <v-sheet class="pa-4" color="#abcdef">
             {{ taskItem.title }}
         </v-sheet>
-
         <v-sheet class="pa-4 pb-0">
             <div
                 class="d-flex align-center mb-3"
@@ -19,10 +18,9 @@
                     disabled
                 />
                 <span>
-                    {{ taskItem.body[index].name }} <br/>
+                    {{ taskItem.body[index].name }}
                 </span>
             </div>
-               
             <span class="preview-wrapper" v-if="taskItem.body.length >= 4">
                 <v-icon 
                     class="dots"
@@ -38,42 +36,52 @@
                 />
             </span>
         </v-sheet>
-
         <div class="btns">
             <v-btn 
-                icon size="small"
+                icon 
+                size="small"
                 class="mr-1"
                 variant="text"
                 @click="removingDialogVisible = true"
             >
                 <v-icon>mdi-delete</v-icon>
             </v-btn>
-
             <v-btn 
-                icon size="small" 
+                icon 
+                size="small" 
                 variant="text"
                 @click="editingDialogVisible = true"
             >
                 <v-icon>mdi-pencil</v-icon>
             </v-btn>
-
             <app-dialog
                 v-model="removingDialogVisible"
-                @update:show="removingDialogVisible = $event"
+                @onClose="removingDialogVisible = false"
             >
-                <template v-slot:title>Вы уверены, что хотите удалить задание?</template>
+                <template v-slot:title>
+                    Вы уверены, что хотите удалить задание?
+                </template>
                 <template v-slot:content>
                     <v-card-actions>  
-                        <v-btn @click="removeTaskById(task.id); removingDialogVisible = false">Да, удалить</v-btn>
+                        <v-btn @click="
+                            removeTaskById(task.id); 
+                            removingDialogVisible = false"
+                        >
+                            Да, удалить
+                        </v-btn>
                         <v-spacer/>
-                        <v-btn @click="removingDialogVisible = false">Отмена</v-btn>
+                        <v-btn @click="removingDialogVisible = false">
+                            Отмена
+                        </v-btn>
                     </v-card-actions>
                 </template>
             </app-dialog>
-            
             <app-dialog 
+                persistent
                 v-model="editingDialogVisible" 
-                @update:show="editingDialogVisible = $event"
+                @onClose="
+                    confirmDialogVisible = getChanged;
+                    editingDialogVisible = getChanged"
             >
                 <template v-slot:title>Редактирование задания</template>
                 <template v-slot:content>
@@ -83,15 +91,44 @@
                     />
                 </template>
             </app-dialog>
+            <app-dialog 
+                v-model="confirmDialogVisible"
+                @onClose="confirmDialogVisible = false"
+            >
+                <template v-slot:title>
+                    Вы уверены, что хотите выйти, <br/>не сохранив изменения?
+                </template>
+                <template v-slot:content>
+                    <v-card-actions>
+                        <v-btn @click="
+                            editingDialogVisible = false; 
+                            confirmDialogVisible = false;
+                            taskItemHistory.title[1] = taskItem.title;
+                            for (i in taskItemHistory.body) {
+                                taskItemHistory.body[i].name[1] = taskItem.body[i].name;
+                                taskItemHistory.body[i].done[1] = taskItem.body[i].done;
+                            }"
+                        >
+                            Да, выйти
+                        </v-btn>
+                        <v-spacer/>
+                        <v-btn @click="
+                            confirmDialogVisible = false"
+                        >
+                            Отмена
+                        </v-btn>
+                    </v-card-actions>
+                </template>
+            </app-dialog>
         </div>
-    </div>
+    </v-card>
 </template>
 
 <script>
 import TaskPreview from './TaskPreview.vue'
 import TaskEditing from '@/components/TaskEditing.vue'
-import { VCardActions, VSheet, VBtn, VIcon, VCheckboxBtn, VSpacer } from 'vuetify/lib/components'
-import { mapActions } from 'vuex'
+import { VCard, VCardActions, VSheet, VBtn, VIcon, VCheckboxBtn, VSpacer } from 'vuetify/lib/components'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
     components: {
@@ -102,7 +139,8 @@ export default {
         VIcon,  
         VCardActions,
         VCheckboxBtn, 
-        VSpacer
+        VSpacer, 
+        VCard
     },
     props: {
         task: {
@@ -112,16 +150,13 @@ export default {
         taskHistory: {
             type: Object,
             required: true
-        },
-        taskItemKey: {
-            type: Number,
-            required: true
         }
     },
     data() {
         return {
             editingDialogVisible: false,
             removingDialogVisible: false,
+            confirmDialogVisible: false,
             taskItem: this.task,
             taskItemHistory: this.taskHistory,
             showPreview: false
@@ -129,13 +164,17 @@ export default {
     },
     methods: {
         ...mapActions([
-            'removeTaskById'
+            'removeTaskById',
+            'setTask'
         ])
     },
     computed: {
         taskPreview () {
             return this.taskItem.body.slice(0, 3);
-        }
+        },
+        ...mapGetters ([
+            'getChanged'
+        ])
     }
 }
 </script>
