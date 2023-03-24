@@ -2,6 +2,7 @@
 
 <template>
     <v-form @submit.prevent>
+        <!-- Название задания -->
         <v-text-field
             class="mb-2"
             label="Название*"
@@ -9,6 +10,8 @@
             :rules="[ fieldValidate ]"
             variant="outlined"
         />
+
+        <!-- Список задач -->
         <div class="task-container"
             v-for="(item, index) in task.body"
             :key="index"
@@ -20,6 +23,7 @@
                 variant="outlined"
             />
         </div>
+        
         <v-card-actions>
             <v-btn
                 variant="text"

@@ -86,12 +86,7 @@ const store = createStore({
             if(localStorage.getItem('store')) {
                 this.replaceState(
                     Object.assign(state, JSON.parse(localStorage.getItem('store')))
-                );
-            }
-        },
-        setLocalStorage() {
-            if(localStorage.store) {
-                this.state = localStorage.store
+                )
             }
         },
         SET_TASK(state, taskId) {

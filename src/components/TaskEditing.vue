@@ -2,6 +2,7 @@
 
 <template>
     <v-form @submit.prevent>
+        <!-- Название задания -->
         <v-text-field 
             label="Название*"
             v-model="taskItemHistory.title[1]"
@@ -9,7 +10,10 @@
             :rules="[ fieldValidate ]"
             @input="setChanged(true)"
         />
+
+        <!-- Список задач -->
         <v-list>
+            <!-- Каждая задача состоит из чекбокса, названия и кнопки удалить -->
             <v-list-item
                 v-for="(item, index) in taskItemHistory.body"
                 :key="index"
@@ -40,6 +44,8 @@
                     >
                         <v-icon>mdi-delete</v-icon>
                     </v-btn>
+
+                    <!-- Подтверждение удаления -->
                     <app-dialog
                         v-model="removingDialogVisible"
                         @onClose="removingDialogVisible = false"
@@ -70,6 +76,7 @@
         </v-list>
 
         <div class="btns d-flex justify-space-between">
+            <!-- Кнопки для отмены последнего действия -->
             <v-btn 
                 variant="text"
                 :disabled="(!this.isSaved && !isUndo)"

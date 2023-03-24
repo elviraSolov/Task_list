@@ -1,8 +1,9 @@
 <!-- Задание -->
 
 <template>
-    <v-card class="d-flex flex-column mb-6 item">
-        <v-sheet class="pa-4" color="#abcdef">
+    <v-card class="d-flex flex-column mb-6">
+        <!-- Карточка с заданием -->
+        <v-sheet class="pa-4 pr-8" color="#abcdef">
             {{ taskItem.title }}
         </v-sheet>
         <v-sheet class="pa-4 pb-0">
@@ -21,9 +22,11 @@
                     {{ taskItem.body[index].name }}
                 </span>
             </div>
+            <!-- Превью для заданий, длина задач которых превышает 3.
+            Появляется при наведении на строку "..." -->
             <span class="preview-wrapper" v-if="taskItem.body.length >= 4">
                 <v-icon 
-                    class="dots"
+                    class="dots p-3 mb-3"
                     @mouseover="showPreview = true"
                     @mouseleave="showPreview = false"
                 >
@@ -36,6 +39,8 @@
                 />
             </span>
         </v-sheet>
+
+        <!-- Кнопки удалить/изменить задание  -->
         <div class="btns">
             <v-btn 
                 icon 
@@ -54,6 +59,8 @@
             >
                 <v-icon>mdi-pencil</v-icon>
             </v-btn>
+
+            <!-- Подтверждение удаления задания -->
             <app-dialog
                 v-model="removingDialogVisible"
                 @onClose="removingDialogVisible = false"
@@ -76,6 +83,8 @@
                     </v-card-actions>
                 </template>
             </app-dialog>
+
+            <!-- Диалоговое окно для редактирования -->
             <app-dialog 
                 persistent
                 v-model="editingDialogVisible" 
@@ -91,6 +100,9 @@
                     />
                 </template>
             </app-dialog>
+
+            <!-- Подтверждение для выхода из редактирования.
+            Появляестя в случае несохраненного изменения-->
             <app-dialog 
                 v-model="confirmDialogVisible"
                 @onClose="confirmDialogVisible = false"
@@ -182,21 +194,11 @@ export default {
 </script>
 
 <style scoped>
-.item {
-    position: relative;
-    width: 100%;
-    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.1); 
-}
 
 .btns {
     position: absolute;
     top: 8px;
     right: 8px;
-}
-
-.dots {
-    padding: 10px;
-    margin-bottom: 10px;
 }
 
 .preview {

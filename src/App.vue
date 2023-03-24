@@ -1,16 +1,23 @@
 <template>
     <v-app>
-        <v-container fluid style="margin: 0 auto; max-width: 720px">
+        <v-container fluid class="container">
             <div class="app">
+                <!-- Список заданий -->
                 <task-list/>
-                <v-btn
-                    icon color="#003153"
-                    class="btn-plus"
-                    size="large"
-                    @click="this.formDialogVisible = true"
-                >
-                    <v-icon color="#ffffff">mdi-plus</v-icon>
-                </v-btn>
+                <!-- Кнопка для создания нового задания -->
+                <div class="btn-wrapper d-flex justify-end">
+                    <v-btn
+                        icon 
+                        color="#003153"
+                        class="btn"
+                        size="large"
+                        @click="this.formDialogVisible = true"
+                    >
+                        <v-icon color="#ffffff">mdi-plus</v-icon>
+                    </v-btn>
+                </div>
+                
+                <!-- Диалоговое окно с формой -->
                 <app-dialog 
                     persistent
                     v-model="formDialogVisible" 
@@ -52,7 +59,6 @@ export default {
             formDialogVisible: false,
         }
     },
-
     beforeCreate() {
         this.$store.commit('initialiseStore')
     }
@@ -60,10 +66,8 @@ export default {
 </script>
 
 <style scoped>
-.btn-plus {
-    position: fixed;
-    right: 15%;
-    bottom: 5%;
-    z-index: 2;
+.container {
+    margin: 0 auto; 
+    max-width: 720px
 }
 </style>
