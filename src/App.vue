@@ -51,6 +51,10 @@ export default {
         return {
             formDialogVisible: false,
         }
+    },
+
+    beforeCreate() {
+        this.$store.commit('initialiseStore')
     }
 }
 </script>

@@ -12,13 +12,6 @@
                 :taskHistory="getTasksHistory[index]"
             />
         </transition-group>
-        <!-- <task-item 
-            v-for="(task, index) in getTasks" 
-            :task="task"
-            :key="task.id"
-            :taskItemKey="index"
-            :taskHistory="getTasksHistory[index]"
-        /> -->
     </div>
     <h1 v-else>Список заданий пуст</h1>
 </template>

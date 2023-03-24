@@ -164,7 +164,6 @@ export default {
         ...mapActions([
             'changeTask',
             'undoChanges',
-            'redoChanges',
             'addTaskItem',
             'removeTaskItem',
             'setTask',
