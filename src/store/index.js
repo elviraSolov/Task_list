@@ -44,17 +44,6 @@ const store = createStore({
         taskHistory: {},
         isChanged: false
     },
-    getters: {
-        getTasks(state) {
-            return state.tasks
-        },
-        getTasksHistory(state) {
-            return state.tasksHistory
-        },
-        getChanged(state) {
-            return state.isChanged
-        }
-    },
     actions: {
         setTask({ commit }, data) {
             commit('SET_TASK', data)

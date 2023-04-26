@@ -1,15 +1,15 @@
 <!-- Список заданий -->
 
 <template>
-    <div v-if="getTasks.length > 0">
+    <div v-if="this.$store.state.tasks.length > 0">
         <h1 class="mb-3">Список заданий</h1>
         <transition-group name="task-list">
             <task-item 
-                v-for="(task, index) in getTasks" 
+                v-for="(task, index) in this.$store.state.tasks" 
                 :task="task"
                 :key="task.id"
                 :taskItemKey="index"
-                :taskHistory="getTasksHistory[index]"
+                :taskHistory="this.$store.state.tasksHistory[index]"
             />
         </transition-group>
     </div>
@@ -18,17 +18,10 @@
 
 <script>
 import TaskItem from "@/components/TaskItem";
-import { mapGetters } from 'vuex'
 
 export default {
     components: {
         TaskItem
-    },
-    computed: {
-        ...mapGetters ([
-            'getTasks',
-            'getTasksHistory'
-        ])
     }
 }
 </script>

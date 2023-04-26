@@ -11,7 +11,7 @@
                         color="#003153"
                         class="btn"
                         size="large"
-                        @click="this.formDialogVisible = true"
+                        @click="formDialogVisible = true"
                     >
                         <v-icon color="#ffffff">mdi-plus</v-icon>
                     </v-btn>
@@ -21,14 +21,14 @@
                 <app-dialog 
                     persistent
                     v-model="formDialogVisible" 
-                    @onClose="this.formDialogVisible = false"
+                    @close="formDialogVisible = false"
                 >
-                    <template v-slot:title>
+                    <template #title>
                         Новое задание
                     </template>
-                    <template v-slot:content>
+                    <template v-slot>
                         <task-form
-                            @hideDialog="this.formDialogVisible = false"
+                            @hideDialog="formDialogVisible = false"
                         />
                     </template>
                 </app-dialog>
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import AppDialog from './components/UI/AppDialog.vue';
+import AppDialog from '@/components/UI/AppDialog.vue';
 import TaskForm from '@/components/TaskForm.vue';
 import TaskList from '@/components/TaskList.vue';
 

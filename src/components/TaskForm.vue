@@ -7,7 +7,7 @@
             class="mb-2"
             label="Название*"
             v-model="this.task.title"
-            :rules="[ fieldValidate ]"
+            :rules="[ requiredTaskName ]"
             variant="outlined"
         />
 
@@ -27,7 +27,7 @@
         <v-card-actions>
             <v-btn
                 variant="text"
-                @click="hideDialog()"
+                @click="$emit('hideDialog')"
             >
                 Отмена
             </v-btn>
@@ -44,7 +44,7 @@
                 :disabled="!this.isValid"
                 @click="
                     addTask(task); 
-                    hideDialog()"
+                    $emit('hideDialog')"
             >
                 Создать
             </v-btn>
@@ -55,8 +55,10 @@
 <script>
 import { VForm, VTextField, VBtn, VSpacer, VCardActions } from 'vuetify/lib/components';
 import { mapActions } from 'vuex';
+import { requiredTaskNameMixin } from '@/mixins/RequiredTaskNameMixin.js';
 
 export default {
+    mixins: [requiredTaskNameMixin],
     components: {
         VForm,
         VTextField,
@@ -69,26 +71,23 @@ export default {
             task: {
                 title: '',
                 body: []
-            },
-            isValid: false
+            }
+        }
+    },
+    computed: {
+        isValid() {
+            if (this.task.title.trim().length === 0) {
+                return false
+            } else {
+                return true
+            }
         }
     },
     methods: {
         addTaskItem() {
             this.task.body.push ({name: '', done: false})
         },
-        fieldValidate (value) {
-            if (value.trim().length === 0) {
-                this.isValid = false
-                return "Это обязательное поле"
-            } else {
-                this.isValid = true
-                return true
-            }
-        },
-        hideDialog() {
-            this.$emit('hideDialog')
-        },
+        emits: ['hideDialog'],
         ...mapActions ([
             'addTask'
         ])

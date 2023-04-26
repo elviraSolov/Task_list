@@ -11,13 +11,13 @@
                 <v-spacer/>
                 <v-btn
                     variant="text"
-                    @click="this.$emit('onClose')"
+                    @click="$emit('close')"
                 >
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
             </v-card-actions>
             <v-card-text>
-                <slot name="content"></slot>
+                <slot></slot>
             </v-card-text>
         </v-card>
     </v-dialog>

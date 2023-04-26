@@ -22,20 +22,16 @@
                     {{ taskItem.body[index].name }}
                 </span>
             </div>
+
             <!-- Превью для заданий, длина задач которых превышает 3.
             Появляется при наведении на строку "..." -->
             <span class="preview-wrapper" v-if="taskItem.body.length >= 4">
-                <v-icon 
-                    class="dots p-3 mb-3"
-                    @mouseover="showPreview = true"
-                    @mouseleave="showPreview = false"
-                >
+                <v-icon class="dots p-3 mb-3">
                     mdi-dots-horizontal
                 </v-icon>
                 <task-preview 
                     :task="this.taskItem" 
-                    class="preview" 
-                    v-show="showPreview"
+                    class="preview"
                 />
             </span>
         </v-sheet>
@@ -63,12 +59,12 @@
             <!-- Подтверждение удаления задания -->
             <app-dialog
                 v-model="removingDialogVisible"
-                @onClose="removingDialogVisible = false"
+                @close="removingDialogVisible = false"
             >
-                <template v-slot:title>
+                <template #title>
                     Вы уверены, что хотите удалить задание?
                 </template>
-                <template v-slot:content>
+                <template v-slot>
                     <v-card-actions>  
                         <v-btn @click="
                             removeTaskById(task.id); 
@@ -88,13 +84,13 @@
             <app-dialog 
                 persistent
                 v-model="editingDialogVisible" 
-                @onClose="
-                    confirmDialogVisible = getChanged;
-                    editingDialogVisible = getChanged"
+                @close="
+                    confirmDialogVisible = this.$store.state.isChanged;
+                    editingDialogVisible = this.$store.state.isChanged"
             >
-                <template v-slot:title>Редактирование задания</template>
-                <template v-slot:content>
-                    <task-editing
+                <template #title>Редактирование задания</template>
+                <template v-slot>
+                    <edit-form
                         :task="taskItem"
                         :taskHistory="taskItemHistory"
                     />
@@ -105,12 +101,12 @@
             Появляестя в случае несохраненного изменения-->
             <app-dialog 
                 v-model="confirmDialogVisible"
-                @onClose="confirmDialogVisible = false"
+                @close="confirmDialogVisible = false"
             >
-                <template v-slot:title>
+                <template #title>
                     Вы уверены, что хотите выйти, <br/>не сохранив изменения?
                 </template>
-                <template v-slot:content>
+                <template v-slot>
                     <v-card-actions>
                         <v-btn @click="
                             editingDialogVisible = false; 
@@ -138,14 +134,14 @@
 </template>
 
 <script>
-import TaskPreview from './TaskPreview.vue'
-import TaskEditing from '@/components/TaskEditing.vue'
+import TaskPreview from '@/components/TaskPreview.vue'
+import EditForm from '@/components/EditForm.vue'
 import { VCard, VCardActions, VSheet, VBtn, VIcon, VCheckboxBtn, VSpacer } from 'vuetify/lib/components'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
     components: {
-        TaskEditing,
+        EditForm,
         TaskPreview,
         VSheet,
         VBtn,
@@ -185,10 +181,7 @@ export default {
     computed: {
         taskPreview () {
             return this.taskItem.body.slice(0, 3);
-        },
-        ...mapGetters ([
-            'getChanged'
-        ])
+        }
     }
 }
 </script>
@@ -206,10 +199,15 @@ export default {
     left: calc(100% + 15px);
     bottom: 100%;
     z-index: 10;
+    display: none;
 }
 
 .preview-wrapper {
     position: relative;
     left: 8px
+}
+
+.dots:hover ~ .preview { 
+    display: block;
 }
 </style>
