@@ -1,15 +1,15 @@
 <!-- Список заданий -->
 
 <template>
-    <div v-if="this.$store.state.tasks.length > 0">
+    <div v-if="$store.state.tasks.length > 0">
         <h1 class="mb-3">Список заданий</h1>
         <transition-group name="task-list">
             <task-item 
-                v-for="(task, index) in this.$store.state.tasks" 
+                v-for="(task, index) in $store.state.tasks" 
                 :task="task"
                 :key="task.id"
                 :taskItemKey="index"
-                :taskHistory="this.$store.state.tasksHistory[index]"
+                :taskHistory="$store.state.tasksHistory[index]"
             />
         </transition-group>
     </div>

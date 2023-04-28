@@ -8,7 +8,7 @@
             <!-- Кнопки для отмены последнего действия -->
             <v-btn 
                 variant="text"
-                :disabled="(!this.isSaved && !isUndo)"
+                :disabled="(!isSaved && !isUndo)"
                 @click="clickUndoBtn()"
             >
                 <v-icon>mdi-undo</v-icon>
@@ -25,15 +25,15 @@
 
             <v-btn
                 variant="text"
-                @click="clickAddBtn(this.task.id)"
+                @click="clickAddBtn(task.id)"
             >
                 Добавить задачу
             </v-btn>
             <v-btn
                 variant="text"
                 color="success"
-                :disabled="(!this.isValid || !this.$store.state.isChanged)"
-                @click="clickSaveBtn(this.task.id)"
+                :disabled="(!isValid || !$store.state.isChanged)"
+                @click="clickSaveBtn(task.id)"
             >
                 Сохранить
             </v-btn>

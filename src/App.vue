@@ -26,11 +26,9 @@
                     <template #title>
                         Новое задание
                     </template>
-                    <template v-slot>
-                        <task-form
-                            @hideDialog="formDialogVisible = false"
-                        />
-                    </template>
+                    <task-form
+                        @hideDialog="formDialogVisible = false"
+                    />
                 </app-dialog>
             </div>
         </v-container>

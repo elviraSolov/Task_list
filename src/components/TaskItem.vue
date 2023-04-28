@@ -30,7 +30,7 @@
                     mdi-dots-horizontal
                 </v-icon>
                 <task-preview 
-                    :task="this.taskItem" 
+                    :task="taskItem" 
                     class="preview"
                 />
             </span>
@@ -64,20 +64,18 @@
                 <template #title>
                     Вы уверены, что хотите удалить задание?
                 </template>
-                <template v-slot>
-                    <v-card-actions>  
-                        <v-btn @click="
-                            removeTaskById(task.id); 
-                            removingDialogVisible = false"
-                        >
-                            Да, удалить
-                        </v-btn>
-                        <v-spacer/>
-                        <v-btn @click="removingDialogVisible = false">
-                            Отмена
-                        </v-btn>
-                    </v-card-actions>
-                </template>
+                <v-card-actions>  
+                    <v-btn @click="
+                        removeTaskById(task.id); 
+                        removingDialogVisible = false"
+                    >
+                        Да, удалить
+                    </v-btn>
+                    <v-spacer/>
+                    <v-btn @click="removingDialogVisible = false">
+                        Отмена
+                    </v-btn>
+                </v-card-actions>
             </app-dialog>
 
             <!-- Диалоговое окно для редактирования -->
@@ -85,49 +83,34 @@
                 persistent
                 v-model="editingDialogVisible" 
                 @close="
-                    confirmDialogVisible = this.$store.state.isChanged;
-                    editingDialogVisible = this.$store.state.isChanged"
+                    confirmDialogVisible = $store.state.isChanged;
+                    editingDialogVisible = $store.state.isChanged"
             >
                 <template #title>Редактирование задания</template>
-                <template v-slot>
-                    <edit-form
-                        :task="taskItem"
-                        :taskHistory="taskItemHistory"
-                    />
-                </template>
+                <edit-form
+                    :task="taskItem"
+                    :taskHistory="taskItemHistory"
+                />
             </app-dialog>
 
             <!-- Подтверждение для выхода из редактирования.
             Появляестя в случае несохраненного изменения-->
-            <app-dialog 
+            <app-dialog
                 v-model="confirmDialogVisible"
                 @close="confirmDialogVisible = false"
             >
                 <template #title>
                     Вы уверены, что хотите выйти, <br/>не сохранив изменения?
                 </template>
-                <template v-slot>
-                    <v-card-actions>
-                        <v-btn @click="
-                            editingDialogVisible = false; 
-                            confirmDialogVisible = false;
-                            taskItemHistory.title[1] = taskItem.title;
-                            for (i in taskItemHistory.body) {
-                                taskItemHistory.body[i].name[1] = taskItem.body[i].name;
-                                taskItemHistory.body[i].done[1] = taskItem.body[i].done;
-                            }
-                            setChanged(false)"
-                        >
-                            Да, выйти
-                        </v-btn>
-                        <v-spacer/>
-                        <v-btn @click="
-                            confirmDialogVisible = false"
-                        >
-                            Отмена
-                        </v-btn>
-                    </v-card-actions>
-                </template>
+                <v-card-actions>
+                    <v-btn @click="clickConfirmBtn()">
+                        Да, выйти
+                    </v-btn>
+                    <v-spacer/>
+                    <v-btn @click="confirmDialogVisible = false">
+                        Отмена
+                    </v-btn>
+                </v-card-actions>
             </app-dialog>
         </div>
     </v-card>
@@ -176,7 +159,17 @@ export default {
             'removeTaskById',
             'setTask',
             'setChanged'
-        ])
+        ]),
+        clickConfirmBtn() {
+            this.editingDialogVisible = false
+            this.confirmDialogVisible = false
+            this.taskItemHistory.title[1] = this.taskItem.title
+            for (let i in this.taskItemHistory.body) {
+                this.taskItemHistory.body[i].name[1] = this.taskItem.body[i].name
+                this.taskItemHistory.body[i].done[1] = this.taskItem.body[i].done
+            }
+            this.setChanged(false)
+        }
     },
     computed: {
         taskPreview () {

@@ -6,7 +6,7 @@
         <v-text-field
             class="mb-2"
             label="Название*"
-            v-model="this.task.title"
+            v-model="task.title"
             :rules="[ requiredTaskName ]"
             variant="outlined"
         />
@@ -41,7 +41,7 @@
             <v-btn
                 color="success"
                 variant="text"
-                :disabled="!this.isValid"
+                :disabled="!isValid"
                 @click="
                     addTask(task); 
                     $emit('hideDialog')"
@@ -83,11 +83,11 @@ export default {
             }
         }
     },
+    emits: ['hideDialog'],
     methods: {
         addTaskItem() {
             this.task.body.push ({name: '', done: false})
         },
-        emits: ['hideDialog'],
         ...mapActions ([
             'addTask'
         ])

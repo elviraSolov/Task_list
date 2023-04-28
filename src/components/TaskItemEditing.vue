@@ -14,7 +14,7 @@
             <!-- Каждая задача состоит из чекбокса, названия и кнопки удалить -->
             <v-list-item
                 v-for="(item, index) in taskItemHistory.body"
-                :key="item"
+                :key="item.name"
                 class="pa-0"
             >
                 <div class="d-flex align-center mb-3">
@@ -48,17 +48,15 @@
                         <template #title>
                             Вы уверены, что хотите удалить задачу?
                         </template>
-                        <template v-slot>
-                            <v-card-actions>
-                                <v-btn @click="clickConfirmDeleteBtn(this.task.id)">
-                                    Да, удалить
-                                </v-btn>
-                                <v-spacer/>
-                                <v-btn @click="removingDialogVisible = false">
-                                    Отмена
-                                </v-btn>
-                            </v-card-actions>
-                        </template>
+                        <v-card-actions>
+                            <v-btn @click="clickConfirmDeleteBtn(task.id)">
+                                Да, удалить
+                            </v-btn>
+                            <v-spacer/>
+                            <v-btn @click="removingDialogVisible = false">
+                                Отмена
+                            </v-btn>
+                        </v-card-actions>
                     </app-dialog>
                 </div>
             </v-list-item>
