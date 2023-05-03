@@ -25,15 +25,18 @@
 
             <!-- Превью для заданий, длина задач которых превышает 3.
             Появляется при наведении на строку "..." -->
-            <span class="preview-wrapper" v-if="taskItem.body.length >= 4">
-                <v-icon class="dots p-3 mb-3">
-                    mdi-dots-horizontal
-                </v-icon>
-                <task-preview 
-                    :task="taskItem" 
-                    class="preview"
-                />
-            </span>
+            <v-btn class="mb-5" v-if="taskItem.body.length >= 4">
+                Предпросмотр
+                <v-tooltip
+                    min-width="300"
+                    activator="parent"
+                    location="end"
+                >
+                    <task-preview 
+                        :task="taskItem" 
+                    />
+                </v-tooltip>
+            </v-btn>
         </v-sheet>
 
         <!-- Кнопки удалить/изменить задание  -->
@@ -119,7 +122,7 @@
 <script>
 import TaskPreview from '@/components/TaskPreview.vue'
 import EditForm from '@/components/EditForm.vue'
-import { VCard, VCardActions, VSheet, VBtn, VIcon, VCheckboxBtn, VSpacer } from 'vuetify/lib/components'
+import { VTooltip, VCard, VCardActions, VSheet, VBtn, VIcon, VCheckboxBtn, VSpacer } from 'vuetify/lib/components'
 import { mapActions } from 'vuex'
 
 export default {
@@ -132,7 +135,8 @@ export default {
         VCardActions,
         VCheckboxBtn, 
         VSpacer, 
-        VCard
+        VCard,
+        VTooltip
     },
     props: {
         task: {
@@ -185,22 +189,5 @@ export default {
     position: absolute;
     top: 8px;
     right: 8px;
-}
-
-.preview {
-    position: absolute;
-    left: calc(100% + 15px);
-    bottom: 100%;
-    z-index: 10;
-    display: none;
-}
-
-.preview-wrapper {
-    position: relative;
-    left: 8px
-}
-
-.dots:hover ~ .preview { 
-    display: block;
 }
 </style>
